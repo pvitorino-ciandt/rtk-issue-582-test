@@ -1,0 +1,72 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.8, pytest-8.0.0, pluggy-1.4.0
+cachedir: .pytest_cache
+rootdir: /home/runner/work/example-project
+configfile: pyproject.toml
+plugins: cov-4.1.0, nbmake-1.5.0
+collecting ... collected 6 items / 3 errors
+
+==================================== ERRORS ====================================
+______________ ERROR at setup of TestWithBug.test_example_one __________________
+name 'true' is not defined
+
+The above exception was the direct cause of the following exception:
+
+    def test_example_one(self) -> None:
+>       """Example test that should skip in CI."""
+E       Failed: Error evaluating 'skipif' condition
+E           os.getenv("CI")
+E       as a Python expression:
+E           true
+E       NameError: name 'true' is not defined
+
+test_example.py:14:
+______________ ERROR at setup of TestWithBug.test_example_two __________________
+name 'true' is not defined
+
+The above exception was the direct cause of the following exception:
+
+    def test_example_two(self) -> None:
+>       """Another test that should skip in CI."""
+E       Failed: Error evaluating 'skipif' condition
+E           os.getenv("CI")
+E       as a Python expression:
+E           true
+E       NameError: name 'true' is not defined
+
+test_example.py:18:
+____________ ERROR at setup of TestWithBug.test_example_three __________________
+name 'true' is not defined
+
+The above exception was the direct cause of the following exception:
+
+    def test_example_three(self) -> None:
+>       """Third test that should skip in CI."""
+E       Failed: Error evaluating 'skipif' condition
+E           os.getenv("CI")
+E       as a Python expression:
+E           true
+E       NameError: name 'true' is not defined
+
+test_example.py:22:
+test_example.py::TestWithFix::test_example_one SKIPPED (Skip in CI) [ 50%]
+test_example.py::TestWithFix::test_example_two SKIPPED (Skip in CI) [ 66%]
+test_example.py::TestWithFix::test_example_three SKIPPED (Skip in CI) [100%]
+
+=========================== short test summary info ============================
+ERROR test_example.py::TestWithBug::test_example_one - Failed: Error evaluating 'skipif' condition
+    os.getenv("CI")
+as a Python expression:
+    true
+ NameError: name 'true' is not defined
+ERROR test_example.py::TestWithBug::test_example_two - Failed: Error evaluating 'skipif' condition
+    os.getenv("CI")
+as a Python expression:
+    true
+ NameError: name 'true' is not defined
+ERROR test_example.py::TestWithBug::test_example_three - Failed: Error evaluating 'skipif' condition
+    os.getenv("CI")
+as a Python expression:
+    true
+ NameError: name 'true' is not defined
+==================== 3 passed, 3 skipped, 3 errors in 0.12s ====================

@@ -1,0 +1,2 @@
+# Minimal requirements for running the test example
+pytest>=7.0.0

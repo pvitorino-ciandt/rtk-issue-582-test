@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Toggle RTK hook in Claude Code settings
+
+set -euo pipefail
+
+SETTINGS_FILE="$HOME/.claude/settings.json"
+BACKUP_FILE="$HOME/.claude/settings.json.bak"
+RTK_HOOK_PATH="$HOME/.claude/hooks/rtk-rewrite.sh"
+
+# Colors for output
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+if [[ ! -f "$SETTINGS_FILE" ]]; then
+    echo -e "${RED}Error: Settings file not found at $SETTINGS_FILE${NC}"
+    exit 1
+fi
+
+# Create backup
+cp "$SETTINGS_FILE" "$BACKUP_FILE"
+
+# Check current state
+if jq -e '.hooks.PreToolUse[] | select(.matcher == "Bash") | .hooks[] | select(.command | contains("rtk-rewrite.sh"))' "$SETTINGS_FILE" > /dev/null 2>&1; then
+    CURRENT_STATE="enabled"
+else
+    CURRENT_STATE="disabled"
+fi
+
+if [[ "$CURRENT_STATE" == "enabled" ]]; then
+    # Disable RTK: Remove the rtk hook from PreToolUse
+    echo -e "${YELLOW}Disabling RTK...${NC}"
+
+    jq '(.hooks.PreToolUse[] | select(.matcher == "Bash") | .hooks) |= map(select(.command | contains("rtk-rewrite.sh") | not))' \
+        "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+
+    echo -e "${GREEN}✓ RTK disabled${NC}"
+    echo "Restart Claude Code for changes to take effect."
+    echo "Run 'toggle-rtk' again to re-enable."
+
+else
+    # Enable RTK: Add the rtk hook to PreToolUse
+    echo -e "${YELLOW}Enabling RTK...${NC}"
+
+    # Check if PreToolUse exists for Bash matcher
+    if jq -e '.hooks.PreToolUse[] | select(.matcher == "Bash")' "$SETTINGS_FILE" > /dev/null 2>&1; then
+        # Bash matcher exists, add hook to it
+        jq --arg cmd "$RTK_HOOK_PATH" \
+            '(.hooks.PreToolUse[] | select(.matcher == "Bash") | .hooks) += [{"type": "command", "command": $cmd}]' \
+            "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+    else
+        # No Bash matcher, create it with the hook
+        jq --arg cmd "$RTK_HOOK_PATH" \
+            '.hooks.PreToolUse += [{"matcher": "Bash", "hooks": [{"type": "command", "command": $cmd}]}]' \
+            "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+    fi
+
+    echo -e "${GREEN}✓ RTK enabled${NC}"
+    echo "Restart Claude Code for changes to take effect."
+    echo "Run 'toggle-rtk' again to disable."
+fi
+
+echo ""
+echo "Backup saved to: $BACKUP_FILE"
+
+exit 0
