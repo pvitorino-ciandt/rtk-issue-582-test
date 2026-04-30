@@ -1,4 +1,4 @@
-# Reprodução Local — RTK Issue #582
+# Reprodução Local — RTK Issue #582 (https://github.com/rtk-ai/rtk/issues/582)
 
 > RTK Hook aumenta custos do Claude Code em 18%
 > Ref: https://github.com/rtk-ai/rtk/issues/582
