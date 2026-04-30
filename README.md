@@ -179,3 +179,13 @@ rtk-test-582/
 ├── rtk-rewrite.sh         ← Hook que reescreve comandos
 └── toggle-rtk             ← Script para habilitar/desabilitar RTK
 ```
+
+## Meus testes
+Com o toggle-rtk ativado
+<img width="964" height="286" alt="image" src="https://github.com/user-attachments/assets/3bba8e6e-1220-4060-b636-a05d4e7f30ae" />
+
+Com o toggle-rtk desativa
+<img width="968" height="290" alt="image" src="https://github.com/user-attachments/assets/750da759-fa13-4125-926e-565aab8a9213" />
+
+
+
